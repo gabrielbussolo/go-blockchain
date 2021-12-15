@@ -1,13 +1,20 @@
 package blockchain
 
 import (
-	"fmt"
 	"go-chain/internal/blockchain/block"
 	"go-chain/internal/blockchain/hash"
 	"time"
 )
 
 const hashGenesisBlock = "0000000000000000000000000000000000000000000000000000000000000000"
+
+type Blockchain interface {
+	Save(block block.Block)
+	GetPreviousBlock() block.Block
+	MineBlock(time time.Time) block.Block
+	IsChainValid() bool
+	GetChain() []block.Block
+}
 
 type blockchain struct {
 	chain []block.Block
@@ -45,7 +52,6 @@ func (b *blockchain) MineBlock(time time.Time) block.Block {
 		}
 		create := b.hash.Create(b2)
 		if create[0:4] == target {
-			fmt.Printf("%d", proof)
 			return b2
 		}
 		proof++
