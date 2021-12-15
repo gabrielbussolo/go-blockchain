@@ -15,4 +15,5 @@ func Build() {
 	handler := handlers.NewBlockchainHandler(b)
 	http.HandleFunc("/mine", handler.HandleMine)
 	http.HandleFunc("/chain", handler.HandleChain)
+	http.HandleFunc("/chain/valid", handler.HandleValidChain)
 }
