@@ -14,4 +14,5 @@ func Build() {
 	b := blockchain.New(h, chainWithGenesis)
 	handler := handlers.NewBlockchainHandler(b)
 	http.HandleFunc("/mine", handler.HandleMine)
+	http.HandleFunc("/chain", handler.HandleChain)
 }
