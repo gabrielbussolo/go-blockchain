@@ -1,8 +1,8 @@
 package blockchain
 
 import (
-	"go-chain/blockchain/block"
-	"go-chain/blockchain/hash"
+	"go-chain/internal/blockchain/block"
+	"go-chain/internal/blockchain/hash"
 	"testing"
 	"time"
 )

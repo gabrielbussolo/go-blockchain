@@ -2,8 +2,8 @@ package blockchain
 
 import (
 	"fmt"
-	"go-chain/blockchain/block"
-	"go-chain/blockchain/hash"
+	"go-chain/internal/blockchain/block"
+	"go-chain/internal/blockchain/hash"
 	"time"
 )
 
