@@ -1,6 +1,7 @@
 package block
 
 import (
+	"go-chain/internal/blockchain/transaction"
 	"time"
 )
 
@@ -9,6 +10,7 @@ type Block struct {
 	Timestamp    time.Time
 	Proof        int
 	PreviousHash string
+	Transactions []transaction.Transaction
 }
 
 func GetGenesis() Block {

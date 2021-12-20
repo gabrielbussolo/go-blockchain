@@ -3,6 +3,7 @@ package blockchain
 import (
 	"go-chain/internal/blockchain/block"
 	"go-chain/internal/blockchain/hash"
+	"go-chain/internal/blockchain/transaction"
 	"time"
 )
 
@@ -17,14 +18,16 @@ type Blockchain interface {
 }
 
 type blockchain struct {
-	chain []block.Block
-	hash  hash.Hash
+	chain   []block.Block
+	mempool []transaction.Transaction
+	hash    hash.Hash
 }
 
-func New(hash hash.Hash, chain []block.Block) *blockchain {
+func New(hash hash.Hash, chain []block.Block, transaction []transaction.Transaction) *blockchain {
 	return &blockchain{
-		chain: chain,
-		hash:  hash,
+		chain:   chain,
+		mempool: transaction,
+		hash:    hash,
 	}
 }
 
@@ -49,13 +52,19 @@ func (b *blockchain) MineBlock(time time.Time) block.Block {
 			Timestamp:    time,
 			Proof:        nonce,
 			PreviousHash: b.hash.Create(previousBlock),
+			Transactions: b.mempool,
 		}
 		create := b.hash.Create(b2)
 		if create[0:4] == target {
+			b.cleanMemPool()
 			return b2
 		}
 		proof++
 	}
+}
+
+func (b *blockchain) cleanMemPool() {
+	b.mempool = make([]transaction.Transaction, 0)
 }
 
 func (b *blockchain) IsChainValid() bool {
@@ -74,4 +83,8 @@ func (b *blockchain) IsChainValid() bool {
 
 func (b *blockchain) GetChain() []block.Block {
 	return b.chain
+}
+
+func (b *blockchain) AddTransaction(sender, receiver string, amount float64) {
+	b.mempool = append(b.mempool, transaction.New(sender, receiver, amount))
 }
