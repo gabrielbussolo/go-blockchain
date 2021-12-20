@@ -3,6 +3,7 @@ package blockchain
 import (
 	"go-chain/internal/blockchain/block"
 	"go-chain/internal/blockchain/hash"
+	"go-chain/internal/blockchain/node"
 	"go-chain/internal/blockchain/transaction"
 	"testing"
 	"time"
@@ -10,9 +11,10 @@ import (
 
 var chainWithGenesis = []block.Block{block.GetGenesis()}
 var mempool = make([]transaction.Transaction, 0)
+var nodes = node.New()
 
 func TestSave(t *testing.T) {
-	blockchain := New(hash.New(), chainWithGenesis, mempool)
+	blockchain := New(hash.New(), chainWithGenesis, mempool, nodes)
 	b := block.Block{
 		Index:        2,
 		Timestamp:    time.Now(),
@@ -26,7 +28,7 @@ func TestSave(t *testing.T) {
 }
 
 func TestGetPreviousBlock(t *testing.T) {
-	blockchain := New(hash.New(), chainWithGenesis, mempool)
+	blockchain := New(hash.New(), chainWithGenesis, mempool, nodes)
 	blockchain.chain = []block.Block{
 		{
 			Index: 0,
@@ -48,7 +50,7 @@ func TestGetPreviousBlock(t *testing.T) {
 
 func TestBlockchain_MineBlock(t *testing.T) {
 	h := hash.New()
-	blockchain := New(h, chainWithGenesis, mempool)
+	blockchain := New(h, chainWithGenesis, mempool, nodes)
 	mineBlock := blockchain.MineBlock(time.Unix(1639509419, 0))
 	if mineBlock.PreviousHash != h.Create(blockchain.GetPreviousBlock()) {
 		t.Errorf("mined a block with wrong previous hash")
@@ -61,7 +63,7 @@ func TestBlockchain_MineBlock(t *testing.T) {
 
 func TestBlockchain_IsChainValid(t *testing.T) {
 	h := hash.New()
-	b := New(h, chainWithGenesis, mempool)
+	b := New(h, chainWithGenesis, mempool, nodes)
 
 	t.Run("valid chain", func(t *testing.T) {
 		mineBlock := b.MineBlock(time.Now())
@@ -90,7 +92,7 @@ func TestBlockchain_IsChainValid(t *testing.T) {
 			Proof:        21321321,
 			PreviousHash: h.Create("invalidhash"),
 		}}
-		b2 := New(hash.New(), chainWithoutGenesis, mempool)
+		b2 := New(hash.New(), chainWithoutGenesis, mempool, nodes)
 		mineBlock := b2.MineBlock(time.Now())
 		b2.Save(mineBlock)
 		valid := b2.IsChainValid()
@@ -101,7 +103,7 @@ func TestBlockchain_IsChainValid(t *testing.T) {
 }
 
 func TestBlockchain_GetChain(t *testing.T) {
-	b := New(hash.New(), chainWithGenesis, mempool)
+	b := New(hash.New(), chainWithGenesis, mempool, nodes)
 	mineBlock := b.MineBlock(time.Now())
 	b.Save(mineBlock)
 
@@ -119,7 +121,7 @@ func TestBlockchain_GetChain(t *testing.T) {
 }
 
 func TestBlockchain_AddTransaction(t *testing.T) {
-	b := New(hash.New(), chainWithGenesis, mempool)
+	b := New(hash.New(), chainWithGenesis, mempool, nodes)
 	tx := transaction.New("", "", 0.5)
 	b.AddTransaction(tx.Sender, tx.Receiver, tx.Amount)
 

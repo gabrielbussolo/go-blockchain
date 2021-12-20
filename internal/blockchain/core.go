@@ -3,6 +3,7 @@ package blockchain
 import (
 	"go-chain/internal/blockchain/block"
 	"go-chain/internal/blockchain/hash"
+	"go-chain/internal/blockchain/node"
 	"go-chain/internal/blockchain/transaction"
 	"time"
 )
@@ -21,13 +22,15 @@ type blockchain struct {
 	chain   []block.Block
 	mempool []transaction.Transaction
 	hash    hash.Hash
+	nodes   *node.Nodes
 }
 
-func New(hash hash.Hash, chain []block.Block, transaction []transaction.Transaction) *blockchain {
+func New(hash hash.Hash, chain []block.Block, transaction []transaction.Transaction, nodes *node.Nodes) *blockchain {
 	return &blockchain{
 		chain:   chain,
 		mempool: transaction,
 		hash:    hash,
+		nodes:   nodes,
 	}
 }
 
@@ -87,4 +90,7 @@ func (b *blockchain) GetChain() []block.Block {
 
 func (b *blockchain) AddTransaction(sender, receiver string, amount float64) {
 	b.mempool = append(b.mempool, transaction.New(sender, receiver, amount))
+}
+func (b *blockchain) AddNode(address string) {
+	b.nodes.Add(address)
 }

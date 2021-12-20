@@ -5,6 +5,7 @@ import (
 	"go-chain/internal/blockchain"
 	"go-chain/internal/blockchain/block"
 	"go-chain/internal/blockchain/hash"
+	"go-chain/internal/blockchain/node"
 	"go-chain/internal/blockchain/transaction"
 	"net/http"
 )
@@ -13,7 +14,8 @@ func Build() {
 	var chainWithGenesis = []block.Block{block.GetGenesis()}
 	h := hash.New()
 	mempool := make([]transaction.Transaction, 0)
-	b := blockchain.New(h, chainWithGenesis, mempool)
+	nodes := node.New()
+	b := blockchain.New(h, chainWithGenesis, mempool, nodes)
 	handler := handlers.NewBlockchainHandler(b)
 	http.HandleFunc("/mine", handler.HandleMine)
 	http.HandleFunc("/chain", handler.HandleChain)
