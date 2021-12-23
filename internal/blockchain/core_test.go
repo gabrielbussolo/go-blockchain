@@ -68,7 +68,7 @@ func TestBlockchain_IsChainValid(t *testing.T) {
 	t.Run("valid chain", func(t *testing.T) {
 		mineBlock := b.MineBlock(time.Now())
 		b.Save(mineBlock)
-		valid := b.IsChainValid()
+		valid := b.IsChainValid(b.chain)
 		if !valid {
 			t.Errorf("chain should be valid by mining a new block")
 		}
@@ -80,7 +80,7 @@ func TestBlockchain_IsChainValid(t *testing.T) {
 			Proof:        1231231,
 			PreviousHash: h.Create("invalidhash"),
 		})
-		valid := b.IsChainValid()
+		valid := b.IsChainValid(b.chain)
 		if valid {
 			t.Errorf("chain should be invalid")
 		}
@@ -95,7 +95,7 @@ func TestBlockchain_IsChainValid(t *testing.T) {
 		b2 := New(hash.New(), chainWithoutGenesis, mempool, nodes)
 		mineBlock := b2.MineBlock(time.Now())
 		b2.Save(mineBlock)
-		valid := b2.IsChainValid()
+		valid := b2.IsChainValid(b.chain)
 		if valid {
 			t.Errorf("chain with invalid genesis should be invalid")
 		}

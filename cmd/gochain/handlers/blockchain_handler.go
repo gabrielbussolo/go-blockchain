@@ -42,7 +42,8 @@ func (bh *blockchainHandler) HandleChain(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	chain := bh.blockchain.GetChain()
-	jsonBytes, err := json.Marshal(chain)
+	chainPresenter := &presenter.Chain{Chain: chain, Length: len(chain)}
+	jsonBytes, err := json.Marshal(chainPresenter)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -59,12 +60,12 @@ func (bh *blockchainHandler) HandleValidChain(w http.ResponseWriter, r *http.Req
 		w.Write([]byte("method not allowed"))
 		return
 	}
-	valid := bh.blockchain.IsChainValid()
+	valid := bh.blockchain.IsChainValid(bh.blockchain.GetChain())
 	var err error
 	var jsonBytes []byte
-	jsonBytes, err = json.Marshal(presenter.ValidChain("The Blockchain is not valid."))
+	jsonBytes, err = json.Marshal(presenter.ValidChain{Message: "The Blockchain is not valid."})
 	if valid {
-		jsonBytes, err = json.Marshal(presenter.ValidChain("All good. The Blockchain is valid."))
+		jsonBytes, err = json.Marshal(presenter.ValidChain{Message: "All good. The Blockchain is valid."})
 	}
 
 	if err != nil {

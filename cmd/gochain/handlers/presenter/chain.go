@@ -1,9 +1,12 @@
 package presenter
 
-type jsonValidChain struct {
+import "go-chain/internal/blockchain/block"
+
+type ValidChain struct {
 	Message string `json:"message"`
 }
 
-func ValidChain(message string) jsonValidChain {
-	return jsonValidChain{Message: message}
+type Chain struct {
+	Chain  []block.Block `json:"chain"`
+	Length int           `json:"length"`
 }

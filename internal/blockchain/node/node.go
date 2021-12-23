@@ -3,11 +3,11 @@ package node
 import "net/url"
 
 type Nodes struct {
-	nodes map[string]bool
+	node map[string]bool
 }
 
 func New() *Nodes {
-	return &Nodes{nodes: make(map[string]bool)}
+	return &Nodes{node: make(map[string]bool)}
 }
 
 func (n *Nodes) Add(address string) {
@@ -16,5 +16,15 @@ func (n *Nodes) Add(address string) {
 		panic("problem to parse the url")
 	}
 	host := parse.Host
-	n.nodes[host] = true
+	n.node[host] = true
+}
+
+func (n *Nodes) GetAll() []string {
+	keys := make([]string, len(n.node))
+	i := 0
+	for k := range n.node {
+		keys[i] = k
+		i++
+	}
+	return keys
 }
